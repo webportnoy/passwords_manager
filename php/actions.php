@@ -12,6 +12,12 @@ function do_fileDownload( $input ){
 		exit("lost file");
 	}
 
+	$fileData = json_decode( file_get_contents( $fileName ), 1 );
+	checkData( $input, [
+		'login' => "/./",
+		'token' => "/./"
+	], $fileData );
+
 	header("Content-Type: application/octet-stream");
 	header("Content-Disposition: attachment; filename=\"" . basename($fileName) . "\"" );
 	header("Content-Length: ".(string)(filesize( $fileName ) ) );
