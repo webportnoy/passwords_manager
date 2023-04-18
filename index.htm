@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Менеджер паролей</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,700&amp;subset=cyrillic,cyrillic-ext">
+	<link rel="stylesheet" href="css/style.css">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+	<link rel="manifest" href="site.webmanifest">
+	<link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#2b5797">
+	<meta name="theme-color" content="#ffffff">
+
+</head>
+<body>
+<div class="layout">
+	<header class="header">
+		<h1 class="logo cols-w1">
+			<span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-user-secret fa-stack-1x fa-inverse"></i></span>
+			<span class="title">Менеджер паролей</span>
+		</h1>
+		<div class="loginActions hidden">
+			<button id="btnSettings"><i class="fa fa-cog"></i> <span class="xs-hidden">Настройки</span></button>
+			<button id="btnChangeMasterPass"><i class="fa fa-key"></i> <span class="xs-hidden">Сменить мастер-пароль</span></button>
+			<button id="btnSignOut"><i class="fas fa-sign-out-alt"></i> <span class="xs-hidden">Выйти</span></button>
+		</div>
+	</header>
+
+	<main class="main">
+
+		<fieldset class="settings fieldset hidden">
+			<legend class="fieldset-legend"><i class="fa fa-cog"></i> Настройки</legend>
+			<div class="cols">
+				<div class="cols-w1">
+					<p>
+						<input type="checkbox" value="0" name="ch_az" id="ch_az" checked="checked">
+						<label for="ch_az">a-z (рекомендуется)</label>
+					</p>
+					<p>
+						<input type="checkbox" value="1" name="ch_AZ" id="ch_AZ" checked="checked">
+						<label for="ch_AZ">A-Z (рекомендуется)</label>
+					</p>
+					<p>
+						<input type="checkbox" value="2" name="ch_09" id="ch_09" checked="checked">
+						<label for="ch_09">0-9 (рекомендуется)</label>
+					</p>
+					<p>
+						Длина пароля <input type="number" name="iLen" id="iLen" value="20" size="3">
+					</p>
+				</div>
+				<div class="cols-w1">
+					<p>
+						<input type="checkbox" value="5" name="ch_simp" id="ch_simp" checked>
+						<label for="ch_spec">Простые символы -*_</label>
+					</p>
+					<p>
+						<input type="checkbox" value="5" name="ch_spec" id="ch_spec" />
+						<label for="ch_spec">Спецсимволы !@#$%^&amp;()+{}[]?.,:;</label>
+					</p>
+					<p>
+						Дополнительные символы: <input type="text" name="iDop" id="iDop" value="" size="30" />
+					</p>
+				</div>
+			</div>
+			<div class="cols">
+				<div class="cols-w1">
+					<p>
+						<a href="javascript:;" class="button fileDownload" downdload>
+							<i class="far fa-download"></i> Скачать свой файл паролей
+						</a>
+					</p>
+				</div>
+			</div>
+		</fieldset>
+
+		<form id="loginForm" action="" class="">
+			<input type="hidden" name="action" value="getMasterLogin">
+			<input autofocus type="text" name="login" placeholder="Логин" pattern="[a-zA-Z0-9_]{4,}" title="Только латиница, от 4 символов" required>
+			<button type="submit"><i class="fa fa-key"></i> Войти</button>
+		</form>
+
+		<form id="passForm" action="" class="hidden">
+			<input type="hidden" name="action" value="getMasterPass">
+			<input type="password" name="pass" placeholder="пароль" pattern=".{8,}" title="Не меньше 8 символов" required>
+			<button type="submit"><i class="fa fa-key"></i> Войти</button>
+			<div class="mt2">
+				<a href="javascript:;" class="backToMasterLogin"><i class="fa fa-arrow-left"></i> Логин</a>
+			</div>
+		</form>
+
+		<form id="passChangeForm" action="" class="hidden">
+			<input type="password" name="pass" placeholder="пароль" pattern=".{8,}" title="Не меньше 8 символов" required>
+			<button type="submit"><i class="fa fa-key"></i> Сохранить новый пароль</button>
+			<div class="mt2">
+				<a href="javascript:;" class="backToPasswords"><i class="fa fa-arrow-left"></i> Отмена</a>
+			</div>
+		</form>
+
+		<div id="passwordsContainer" class="container hidden">
+			<div class="container-viewport">
+				<div class="categories list container-col">
+					<div class="list-header">
+						<i class="far fa-folder-open mr"></i>
+						Категории
+						<a class="addCateg fr" title="Добавить категорию" href="javascript:;"><i class="fa fa-plus"></i> Добавить</a>
+					</div>
+				</div>
+				<div class="accountsList list container-col">
+					<div class="list-header">
+						<i class="far fa-users mr"></i>
+						Аккаунты
+						<a class="addAccount fr" disabled title="Добавить аккаунт" href="javascript:;"><i class="fa fa-plus"></i> Добавить</a>
+					</div>
+				</div>
+				<div class="account container-col">
+					<div class="list-header">
+						<i class="far fa-user mr"></i>
+						Аккаунт
+					</div>
+
+					<form class="accountForm form hidden" action="">
+						<div class="form-row form-row-stack">
+							<i class="far fa-user gray-text"></i>
+							<input class="form-input" name="title" type="text" placeholder="Название аккаунта">
+						</div>
+						<div class="form-row form-row-stack">
+							<i class="far fa-at gray-text"></i>
+							<input class="form-input" name="login" type="text" placeholder="Логин">
+							<a href="javascript:;" class="btnCopy" title="Скопировать"><i class="far fa-copy"></i></a>
+						</div>
+						<div class="form-row form-row-stack">
+							<i class="far fa-key gray-text"></i>
+							<input class="form-input password" name="password" type="password" placeholder="Пароль">
+							<a href="javascript:;" class="btnViewPass" title="Посмотреть"><i class="far fa-eye fa-eye-slash"></i></a>
+							<a href="javascript:;" class="btnCopy" title="Скопировать"><i class="far fa-copy"></i></a>
+							<a href="javascript:;" class="btnGeneratePass" title="Сгенерировать новый пароль"><i class="far fa-sync"></i></a>
+						</div>
+						<div class="form-row form-row-stack">
+							<i class="far fa-link gray-text"></i>
+							<input class="form-input" name="url" type="text" placeholder="Cсылка">
+						</div>
+						<div class="form-row form-row-stack">
+							<i class="far fa-comment gray-text"></i>
+							<textarea class="form-input" name="comment" cols="30" rows="4" placeholder="Комментарий"></textarea>
+						</div>
+						<div class="form-row ac">
+							<button class="form-button" type="submit"><i class="fa fa-check"></i> Сохранить</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</main>
+
+</div>
+
+<script src="js/vanila_shortcuts.js"></script>
+<script src="js/crypto-js.min.js.js" async></script>
+<script src="js/app.js" async></script>
+
+</body>
+</html>
