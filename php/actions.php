@@ -5,10 +5,10 @@ function do_fileDownload( $input ){
 	checkData( $input, [
 		'login' => "/^[a-zA-Z0-9_]{4,}$/",
 		'token' => "/^[a-z0-9]{32}$/"
-	]);
+	], $_SESSION['masterMeta'] );
 
 	$fileName = "../storage/{$input['login']}.json";
-	if( !file_exists( $fileName ) || $_SESSION['masterMeta']['login'] != $input['login'] ){
+	if( !file_exists( $fileName ) ){
 		exitError("Wrong login");
 	}
 
@@ -97,7 +97,6 @@ function do_getMasterPass( $input ){
 		'algos' => "/^[a-z0-9\,]+$/",
 		'steps' => "/^[0-9]+$/"
 	], $_SESSION['masterMeta'] );
-	$_SESSION['masterMeta']['key'] = $input['key'];
 
 	$fileName = "../storage/{$input['login']}.json";
 	if( file_exists( $fileName ) ){
@@ -124,6 +123,7 @@ function do_getMasterPass( $input ){
 		$resp['passwords'] = $data['passwords'];
 	}
 
+	$_SESSION['masterMeta']['key'] = $input['key'];
 	$_SESSION['masterMeta']['token'] = $resp['token'];
 
 	json_out($resp);
@@ -137,14 +137,15 @@ function do_setNewMasterPass( $input ){
 	checkData( $input, [
 		'login' => "/^[a-zA-Z0-9_]{4,}$/",
 		'key' => "/^[a-z0-9]{32}$/",
+		'new_key' => "/^[a-z0-9]{32}$/",
 		'salt' => "/^[a-z0-9]{32}$/i",
 		'algos' => "/^[a-z0-9\,]+$/",
 		'steps' => "/^[0-9]+$/",
 		'token' => "/^[a-z0-9]{32}$/",
 		'passwords' => "/./"
-	] );
+	], $_SESSION['masterMeta'] );
 
-	$_SESSION['masterMeta']['key'] = $input['key'];
+	$_SESSION['masterMeta']['key'] = $input['new_key'];
 
 	$fileName = "../storage/{$input['login']}.json";
 	if( !file_exists( $fileName ) ){
@@ -153,11 +154,11 @@ function do_setNewMasterPass( $input ){
 
 	$fileData = json_decode( file_get_contents( $fileName ), 1 );
 
-	if( !tokenCheck( $input['login'], $input['token'] ) || $fileData['token'] != $input['token'] || $_SESSION['masterMeta']['token'] != $input['token'] ){
+	if( !tokenCheck( $input['login'], $input['token'] ) || $fileData['token'] != $input['token'] ){
 		exitError( "token not correct" );
 	}
 
-	$fileData['key'] = $input['key'];
+	$fileData['key'] = $_SESSION['masterMeta']['key'];
 	$fileData['passwords'] = $input['passwords'];
 	file_put_contents( $fileName, json_encode( $fileData ) );
 
