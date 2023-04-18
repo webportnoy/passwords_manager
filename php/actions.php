@@ -8,15 +8,14 @@ function do_fileDownload( $input ){
 	]);
 
 	$fileName = "../storage/{$input['login']}.json";
-	if( !file_exists( $fileName ) || !tokenCheck( $input['login'], $input['token'] ) ){
-		exit("lost file");
+	if( !file_exists( $fileName ) || $_SESSION['masterMeta']['login'] != $input['login'] ){
+		exitError("Wrong login");
 	}
 
 	$fileData = json_decode( file_get_contents( $fileName ), 1 );
-	checkData( $input, [
-		'login' => "/./",
-		'token' => "/./"
-	], $fileData );
+	if( !tokenCheck( $input['login'], $input['token'] ) || $fileData['token'] != $input['token'] ){
+		exitError( "token not correct" );
+	}
 
 	header("Content-Type: application/octet-stream");
 	header("Content-Disposition: attachment; filename=\"" . basename($fileName) . "\"" );
@@ -125,6 +124,8 @@ function do_getMasterPass( $input ){
 		$resp['passwords'] = $data['passwords'];
 	}
 
+	$_SESSION['masterMeta']['token'] = $resp['token'];
+
 	json_out($resp);
 }
 
@@ -132,7 +133,6 @@ function do_setNewMasterPass( $input ){
 	$resp = [
 		"response" => "ok"
 	];
-
 
 	checkData( $input, [
 		'login' => "/^[a-zA-Z0-9_]{4,}$/",
@@ -153,7 +153,7 @@ function do_setNewMasterPass( $input ){
 
 	$fileData = json_decode( file_get_contents( $fileName ), 1 );
 
-	if( !tokenCheck( $input['login'], $input['token'] ) || $fileData['token'] != $input['token'] ){
+	if( !tokenCheck( $input['login'], $input['token'] ) || $fileData['token'] != $input['token'] || $_SESSION['masterMeta']['token'] != $input['token'] ){
 		exitError( "token not correct" );
 	}
 
