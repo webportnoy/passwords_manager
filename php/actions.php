@@ -8,7 +8,7 @@ function do_fileDownload( $input ){
 	]);
 
 	$fileName = "../storage/{$input['login']}.json";
-	if( !file_exists( $fileName ) ){
+	if( !file_exists( $fileName ) || !tokenCheck( $input['login'], $input['token'] ) ){
 		exit("lost file");
 	}
 
