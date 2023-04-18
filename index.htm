@@ -25,7 +25,6 @@
 		</h1>
 		<div class="loginActions hidden">
 			<button id="btnSettings"><i class="fa fa-cog"></i> <span class="xs-hidden">Настройки</span></button>
-			<button id="btnChangeMasterPass"><i class="fa fa-key"></i> <span class="xs-hidden">Сменить мастер-пароль</span></button>
 			<button id="btnSignOut"><i class="fas fa-sign-out-alt"></i> <span class="xs-hidden">Выйти</span></button>
 		</div>
 	</header>
@@ -49,11 +48,6 @@
 						<label for="ch_09">0-9 (рекомендуется)</label>
 					</p>
 					<p>
-						Длина пароля <input type="number" name="iLen" id="iLen" value="20" size="3">
-					</p>
-				</div>
-				<div class="cols-w1">
-					<p>
 						<input type="checkbox" value="5" name="ch_simp" id="ch_simp" checked>
 						<label for="ch_spec">Простые символы -*_</label>
 					</p>
@@ -64,15 +58,22 @@
 					<p>
 						Дополнительные символы: <input type="text" name="iDop" id="iDop" value="" size="30" />
 					</p>
+					<p>
+						Длина пароля <input type="number" name="iLen" id="iLen" value="20" size="3">
+					</p>
 				</div>
-			</div>
-			<div class="cols">
 				<div class="cols-w1">
 					<p>
 						<a href="javascript:;" class="button fileDownload" downdload>
 							<i class="far fa-download"></i> Скачать свой файл паролей
 						</a>
 					</p>
+					<hr>
+					<form class="mt" id="passChangeForm" action="">
+						<p>Сменить мастер-пароль</p>
+						<input type="password" name="pass" placeholder="пароль" pattern=".{8,}" title="Не меньше 8 символов" required>
+						<button type="submit"><i class="far fa-key"></i> Сохранить новый пароль</button>
+					</form>
 				</div>
 			</div>
 		</fieldset>
@@ -89,14 +90,6 @@
 			<button type="submit"><i class="fa fa-key"></i> Войти</button>
 			<div class="mt2">
 				<a href="javascript:;" class="backToMasterLogin"><i class="fa fa-arrow-left"></i> Логин</a>
-			</div>
-		</form>
-
-		<form id="passChangeForm" action="" class="hidden">
-			<input type="password" name="pass" placeholder="пароль" pattern=".{8,}" title="Не меньше 8 символов" required>
-			<button type="submit"><i class="fa fa-key"></i> Сохранить новый пароль</button>
-			<div class="mt2">
-				<a href="javascript:;" class="backToPasswords"><i class="fa fa-arrow-left"></i> Отмена</a>
 			</div>
 		</form>
 

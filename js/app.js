@@ -24,9 +24,7 @@ function App(){
 		passForm.on("submit", self.onMasterPassSubmit );
 		passChangeForm.on("submit", self.onPassChangeFormSubmit );
 		btnSignOut.on("click", self.signOut );
-		btnChangeMasterPass.on("click", self.changeMasterPass );
 		QQ(".backToMasterLogin").on("click", self.backToMasterLogin );
-		QQ(".backToPasswords").on("click", self.backToPasswords );
 		QQ(".fileDownload").on("click", self.fileDownload );
 
 		QQ(".addCateg").on("click", self.categoryAdd );
@@ -295,11 +293,11 @@ function App(){
 		},1);
 	};
 
-	this.sendMasterHash = function( data ){
-		data.login = masterMeta.login;
-		data.action = "getMasterPass";
+	this.sendMasterHash = function( dataToSend ){
+		dataToSend.login = masterMeta.login;
+		dataToSend.action = "getMasterPass";
 
-		fetch( self.backendUrl, { method: "POST", credentials: "include", body: new URLSearchParams( data ) })
+		fetch( self.backendUrl, { method: "POST", credentials: "include", body: new URLSearchParams( dataToSend ) })
 			.then(r=>r.json())
 			.then(data=>{
 				self.enableForm( passForm );
@@ -312,6 +310,7 @@ function App(){
 
 				localStorage.passManagerLogin = masterMeta.login;
 				masterMeta.token = data.token;
+				masterMeta.key = dataToSend.key;
 				masterMeta.passwordsKey = CryptoJS.MD5( masterMeta.pass ).toString()
 
 				self.passwordsEncoded = data.passwords;
@@ -377,21 +376,22 @@ function App(){
 		self.clearLists();
 
 		passwordsContainer.addClass("hidden");
+		Q(".settings").addClass("hidden");
 		self.checkAuth();
 	};
 
-	this.changeMasterPass = function(){
-		passwordsContainer.addClass("hidden");
+	this.toggleSettings = function(){
+		let settingsBlock = Q(".settings"),
+			isActive = !settingsBlock.classList.contains("hidden");
 
-		passChangeForm.reset();
-		passChangeForm.removeClass("hidden");
-		Q("input[type='password']", passChangeForm).focus();
-	};
-
-	this.backToPasswords = function(){
-		passChangeForm.reset();
-		passChangeForm.addClass("hidden");
-		passwordsContainer.removeClass("hidden");
+		if( isActive ){
+			passwordsContainer.removeClass("hidden");
+			settingsBlock.addClass("hidden");
+		}
+		else{
+			passwordsContainer.addClass("hidden");
+			settingsBlock.removeClass("hidden");
+		}
 	};
 
 	this.onPassChangeFormSubmit = function( e ){
@@ -412,26 +412,15 @@ function App(){
 
 	};
 
-	this.toggleSettings = function(){
-		let settingsBlock = Q(".settings"),
-			isActive = !settingsBlock.classList.contains("hidden");
-
-		if( isActive ){
-			passwordsContainer.removeClass("hidden");
-			settingsBlock.addClass("hidden");
-		}
-		else{
-			passwordsContainer.addClass("hidden");
-			settingsBlock.removeClass("hidden");
-		}
-	};
-
 	this.sendNewMasterHash = function( data ){
 
 		let passwordsKey = CryptoJS.MD5( masterMeta.pass ).toString();
+		data.passwords = self.encodePasswords( passwords, passwordsKey );
+		data.new_key = data.key;
+
+		data.key = masterMeta.key;
 		data.login = masterMeta.login;
 		data.token = masterMeta.token;
-		data.passwords = self.encodePasswords( passwords, passwordsKey );
 		data.action = "setNewMasterPass";
 
 		fetch( self.backendUrl, { method: "POST", credentials: "include", body: new URLSearchParams( data ) })
@@ -445,10 +434,7 @@ function App(){
 			passwordsEncoded = data.passwords;
 			masterMeta.pass = data.key;
 			masterMeta.passwordsKey = passwordsKey;
-
-			passChangeForm.classList.add("hidden");
-			passwordsContainer.classList.remove("hidden");
-
+			alert("ok");
 		});
 	};
 
